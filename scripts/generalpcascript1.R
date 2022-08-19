@@ -122,7 +122,7 @@ ggplot(tresultnbclust)+geom_col(aes(x=rownames(tresultnbclust),y=Number_clusters
   theme(panel.grid.major = element_line(color='light grey'),
         axis.text.x = element_text(angle=90))
 # now that we picked the numberof clusters, set it to k
-k<-6
+k<-6 # set this number to your desired number of clusters
 km.res <- kmeans(tdat, centers = k, nstart = 25)
 cluster<-as.factor(km.res$cluster)
 # recombine original numeric dat, pca dims, pacmapdat, umapdat, and metadata
