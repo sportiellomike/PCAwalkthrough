@@ -1,0 +1,13 @@
+library(reticulate)
+python_pandas <- import("pandas")
+python_pacmap <- import("pacmap")
+python_numpy <- import("numpy")
+pydat<-as.data.frame(t(dat))
+fraud_pandas <- reticulate::r_to_py(pydat)
+nparray <- fraud_pandas$values
+nparray <- nparray$astype(python_numpy$float)
+embedding <- python_pacmap$PaCMAP(n_components = 2L,n_neighbors=NULL, MN_ratio=0.5, FP_ratio=2.0) 
+embedding <- python_pacmap$PaCMAP()
+X_transformed <- embedding$fit_transform(nparray, init="pca")
+fraud_transformed <- data.frame(X_transformed)
+plot(fraud_transformed)
