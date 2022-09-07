@@ -91,6 +91,9 @@ library(factoextra)
 library(NbClust)
 # first let's scale the data
 tdatscaled <- scale(tdat)
+
+# now we can try to find the optimal number of clusters so we aren't just guessing.
+set.seed(585414) # we set a seed to make it reproducible. You can pick any number for this.
 # Elbow method
 fviz_nbclust(tdatscaled, kmeans, method = "wss") +
   labs(subtitle = "Elbow method")
@@ -99,11 +102,7 @@ fviz_nbclust(tdatscaled, kmeans, method = "wss") +
 fviz_nbclust(tdatscaled, kmeans, method = "silhouette")+
   labs(subtitle = "Silhouette method")
 
-# Gap statistic
-# nboot = 50 to keep the function speedy. 
-# recommended value: nboot= 500 for your analysis.
-# Use verbose = FALSE to hide computing progression.
-set.seed(585414)
+# gap method
 fviz_nbclust(tdatscaled, kmeans, nstart = 25,  method = "gap_stat", nboot = 50)+
   labs(subtitle = "Gap statistic method")
 
@@ -125,7 +124,9 @@ ggplot(tresultnbclust)+geom_col(aes(x=rownames(tresultnbclust),y=Number_clusters
 k<-6 # set this number to your desired number of clusters
 km.res <- kmeans(tdat, centers = k, nstart = 25)
 cluster<-as.factor(km.res$cluster)
-# recombine original numeric dat, pca dims, pacmapdat, umapdat, and metadata
+
+# recombine original numeric dat, pca dims, pacmapdat, umapdat, and metadata. 
+# This will be your main dataframe from which you plot now.
 megadat<-data.frame(t(dat),pcadimdf,pacmapdat,umapdimdf,cluster,metadata) 
 
 
