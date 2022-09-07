@@ -35,7 +35,7 @@ dat<-as.matrix(dat) #to use some downstream arguments, we have to have our data 
 head(dat) # let's take a look at the first few lines
 
 str(dat) # let's take a look at the actual structure
-dat<-t(dat) # we want to transpose this so that each row is thing we might care about (for example gene name), and each column is a sample (in this case car type)
+dat<-t(dat) # we want to transpose this so that each row is thing we might care about (for example gene name), and each column is a sample (in this case plant type)
 head(dat) # let's take a look at the first few lines
 
 str(dat) # let's take a look at the actual structure
