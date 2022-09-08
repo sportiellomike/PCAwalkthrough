@@ -3,6 +3,11 @@
 # this script was edited by Mike Sportiello on 8.18.22
 
 # make sure that you have both python installed as well as the called imports if you want to run the pacmap stuff.
+# i recommend installing python through miniconda: https://docs.conda.io/en/latest/miniconda.html 
+# if you are fine with only PCA and umap, you can comment out/ delete all the pacmap section, 
+# and then make sure you aren't adding something called pacmapdat to your megadat
+# alrightalrightalright let's start this script.
+
 # load in libraries
 library(ggplot2)
 library(ggpubr)
@@ -11,10 +16,15 @@ library(matrixStats)
 library(dplyr)
 library(parallel)
 library(uwot)
+library(factoextra)
+library(NbClust)
+library(reticulate)
 
 # Let's load in some fake data and take a peak
 # dat<-mtcars # this data set is all numeric
 dat<-iris # this data set is numeric with one column that is character (species column)
+
+# change iris to your own data if you want to run this script for your own purposes. You may need to read.csv() or read_xlsx() it in and assing it to dat.
 head(dat) # let's look at what the first few columns look like
 str(dat) # let's look at the actual structure: which columns are numeric? Which are character? etc.
 nums <- unlist(lapply(dat, is.numeric), use.names = FALSE)  # let's look at which columns are numeric and therefore able to be entered into downstream PCA and other dimensional reduction techniques
@@ -72,7 +82,9 @@ umapcolnames<-paste0(rep('umap.',length(umapdimdf)),1:length((umapdimdf))) # let
 colnames(umapdimdf)<-umapcolnames
 
 # let's get the pacmap stuff going
-library(reticulate)
+# you should probably read some about it: https://github.com/YingfanWang/PaCMAP
+# these next few lines are basically running R as python, and it won't make much sense to your eyes if you know R or python, so I'm not going to comment the below stuff out.
+
 python_pandas <- import("pandas")
 python_pacmap <- import("pacmap")
 python_numpy <- import("numpy")
@@ -80,19 +92,19 @@ tdat<-as.data.frame(t(dat))
 pydat <- reticulate::r_to_py(tdat)
 nparray <- pydat$values
 nparray <- nparray$astype(python_numpy$float)
-embedding <- python_pacmap$PaCMAP(n_components = 2L,n_neighbors=NULL, MN_ratio=0.5, FP_ratio=2.0) 
-embedding <- python_pacmap$PaCMAP()
+embedding <- python_pacmap$PaCMAP(n_dims = as.integer(2), MN_ratio=0.5, FP_ratio=2.0)  # if you want more than 2 pacmap components you can change 2 to the number you actually want.
+
 X_transformed <- embedding$fit_transform(nparray, init="pca")
 pacmapdat <- data.frame(X_transformed)
 colnames(pacmapdat)<-paste0('pacmap.',seq(1:length(colnames(pacmapdat))))
-
+head(pacmapdat)
 # let's cluster
-library(factoextra)
-library(NbClust)
+
 # first let's scale the data
 tdatscaled <- scale(tdat)
 
-# now we can try to find the optimal number of clusters so we aren't just guessing.
+# now we can try to find the optimal number of clusters so we aren't just guessing. Here are presented a number of ways.
+# you should probably read more about that here: https://www.datanovia.com/en/lessons/determining-the-optimal-number-of-clusters-3-must-know-methods/
 set.seed(585414) # we set a seed to make it reproducible. You can pick any number for this.
 # Elbow method
 fviz_nbclust(tdatscaled, kmeans, method = "wss") +
