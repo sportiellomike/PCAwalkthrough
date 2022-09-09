@@ -4,6 +4,7 @@
 
 # make sure that you have both python installed as well as the called imports if you want to run the pacmap stuff.
 # i recommend installing python through miniconda: https://docs.conda.io/en/latest/miniconda.html 
+# i think you may have to assign which python rstudio is using. To do so, go to Tools, then global options, then python, then click which one you want to use.
 # if you are fine with only PCA and umap, you can comment out/ delete all the pacmap section, 
 # and then make sure you aren't adding something called pacmapdat to your megadat
 # alrightalrightalright let's start this script.
@@ -19,11 +20,11 @@ library(uwot)
 library(factoextra)
 library(NbClust)
 library(reticulate)
-
+library(readxl)
 # Let's load in some fake data and take a peak
 # dat<-mtcars # this data set is all numeric
 dat<-iris # this data set is numeric with one column that is character (species column)
-
+# dat<-read_xlsx('./exampledatasetforpcascript.xlsx') 
 # change iris to your own data if you want to run this script for your own purposes. You may need to read.csv() or read_xlsx() it in and assing it to dat.
 head(dat) # let's look at what the first few columns look like
 str(dat) # let's look at the actual structure: which columns are numeric? Which are character? etc.
@@ -121,6 +122,7 @@ fviz_nbclust(tdatscaled, kmeans, nstart = 25,  method = "gap_stat", nboot = 50)+
 resultNbClust<-NbClust(tdatscaled, diss=NULL, distance = "euclidean", min.nc=2, max.nc=15, 
         method = "kmeans", index = "all") 
 
+
 tresultnbclust<-as.data.frame(t(resultNbClust$Best.nc))
 ggplot(tresultnbclust)+geom_bar(aes(x=factor(Number_clusters)))+
   theme(panel.grid.major = element_line(color='light grey'))+
@@ -153,6 +155,8 @@ theme_set(theme(panel.background = element_blank(),
 # now we can plot
 ggplot(megadat)+geom_point(aes(x=PC1,y=PC2)) # general pca
 ggplot(megadat)+geom_point(aes(x=PC1,y=PC2,color=Species)) + scale_color_viridis(discrete = T,end=.8)# general pca colored by character column we originally took out species
+# if you want to change color, you can delete scale color viridis and use scale_color_manual(c('colrcodes'))
+
 ggplot(megadat)+geom_point(aes(x=PC1,y=PC2,color=cluster)) +
   scale_color_viridis(discrete = T,end=.8)+
   stat_conf_ellipse(aes(x=PC1,y=PC2,color=cluster)) # general pca colored by cluster, which correlates almost perfectly with species as you'll notice
