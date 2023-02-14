@@ -215,7 +215,7 @@ absloadings<-absloadings[order(-absloadings$PC3),]
 princ3names<-row.names(absloadings)
 
 # now we plot the contributions we have for each saved in princ, but we reorder princ by princ1names
-pc1<-ggplot(princ,aes(x=reorder(rownames(absprinc),PC1),y=PC1,fill=sign(PC1)))+
+pc1<-ggplot(princ,aes(x=reorder(rownames(princ),PC1),y=PC1,fill=sign(PC1)))+
   geom_col()+coord_flip()+
   scale_fill_viridis(begin = .1,end = .8)+
   theme(axis.title.y = element_blank())+
@@ -226,7 +226,7 @@ pc1<-ggplot(princ,aes(x=reorder(rownames(absprinc),PC1),y=PC1,fill=sign(PC1)))+
   labs(title='PC1',y='PC1 Contribution')+
   theme(legend.position = 'none')
 # we make similar plots for pc2 and pc3
-pc2<-ggplot(princ,aes(x=reorder(rownames(absprinc),PC2),y=PC2,fill=sign(PC2)))+
+pc2<-ggplot(princ,aes(x=reorder(rownames(princ),PC2),y=PC2,fill=sign(PC2)))+
   geom_col()+coord_flip()+
   scale_fill_viridis(begin = .1,end = .8)+
   theme(axis.title.y = element_blank())+
@@ -237,7 +237,7 @@ pc2<-ggplot(princ,aes(x=reorder(rownames(absprinc),PC2),y=PC2,fill=sign(PC2)))+
   labs(title='PC2',y='PC2 Contribution')+
   theme(legend.position = 'none')
 
-pc3<-ggplot(princ,aes(x=reorder(rownames(absprinc),PC3),y=PC3,fill=sign(PC3)))+
+pc3<-ggplot(princ,aes(x=reorder(rownames(princ),PC3),y=PC3,fill=sign(PC3)))+
   geom_col()+coord_flip()+
   scale_fill_viridis(begin = .1,end = .8)+
   theme(axis.title.y = element_blank())+
